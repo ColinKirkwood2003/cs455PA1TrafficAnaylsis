@@ -1,0 +1,16 @@
+
+Processing PCAP file 'trafficIPoptions.pcap'
+
+magic number A1B2C3D4
+major version 2
+minor version 4
+GMT to local correction 0 seconds
+accuracy of timestamps 0
+Cut-off max length of captured packets 262144
+data link type 1
+
+PktNum     Time Stamp OrgLen / Captrd Source               Destination          Protocol info
+     1       0.000000     82 /     82 192.168.2.2          192.168.3.3          ICMP     IP_HDR{ Len=60 incl. 40 options bytes} ICMP_HDR{ Echo Request :id=14040, seq=    1} AppData=    0
+     2       0.000258     82 /     82 192.168.3.3          192.168.2.2          ICMP     IP_HDR{ Len=60 incl. 40 options bytes} ICMP_HDR{ Echo Reply   :id=14040, seq=    1} AppData=    0
+
+Reached end of PCAP file 'trafficIPoptions.pcap'

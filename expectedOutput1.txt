@@ -1,0 +1,22 @@
+
+Processing PCAP file 'trafficArpIcmp.pcap'
+
+magic number A1B2C3D4
+major version 2
+minor version 4
+GMT to local correction 0 seconds
+accuracy of timestamps 0
+Cut-off max length of captured packets 262144
+data link type 1
+
+PktNum     Time Stamp OrgLen / Captrd Source               Destination          Protocol info
+     1       0.000000     42 /     42 00:0c:29:42:92:84    ff:ff:ff:ff:ff:ff    ARP      Who has 10.0.100.2 ? Tell 10.0.100.1
+     2       0.000377     60 /     60 00:0c:29:f4:45:4e    00:0c:29:42:92:84    ARP      10.0.100.2 is at 00:0c:29:f4:45:4e
+     3       0.000383     98 /     98 10.0.100.1           10.0.100.2           ICMP     IP_HDR{ Len=20 incl. 0 options bytes} ICMP_HDR{ Echo Request :id= 3457, seq=    1} AppData=   56
+     4       0.000647     98 /     98 10.0.100.2           10.0.100.1           ICMP     IP_HDR{ Len=20 incl. 0 options bytes} ICMP_HDR{ Echo Reply   :id= 3457, seq=    1} AppData=   56
+     5       1.735968     42 /     42 00:0c:29:42:92:84    ff:ff:ff:ff:ff:ff    ARP      Who has 10.0.100.22 ? Tell 10.0.100.1
+     6       1.736315     60 /     60 00:0c:29:e2:4f:fd    00:0c:29:42:92:84    ARP      10.0.100.22 is at 00:0c:29:e2:4f:fd
+     7       1.736320     98 /     98 10.0.100.1           10.0.100.22          ICMP     IP_HDR{ Len=20 incl. 0 options bytes} ICMP_HDR{ Echo Request :id= 3458, seq=    1} AppData=   56
+     8       1.736593     98 /     98 10.0.100.22          10.0.100.1           ICMP     IP_HDR{ Len=20 incl. 0 options bytes} ICMP_HDR{ Echo Reply   :id= 3458, seq=    1} AppData=   56
+
+Reached end of PCAP file 'trafficArpIcmp.pcap'

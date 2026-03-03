@@ -1,0 +1,27 @@
+
+Processing PCAP file 'trafficUdpTcp.pcap'
+
+magic number A1B2C3D4
+major version 2
+minor version 4
+GMT to local correction 0 seconds
+accuracy of timestamps 0
+Cut-off max length of captured packets 262144
+data link type 1
+
+PktNum     Time Stamp OrgLen / Captrd Source               Destination          Protocol info
+     1       0.000000     66 /     66 10.0.100.1           224.0.0.9            UDP      IP_HDR{ Len=20 incl. 0 options bytes} AppData=    0
+     2      10.391550     86 /     86 10.0.100.1           224.0.0.9            UDP      IP_HDR{ Len=20 incl. 0 options bytes} AppData=    0
+     3      35.174211     95 /     95 192.168.154.134      192.168.154.2        UDP      IP_HDR{ Len=20 incl. 0 options bytes} AppData=    0
+     4      35.204842    253 /    253 192.168.154.2        192.168.154.134      UDP      IP_HDR{ Len=20 incl. 0 options bytes} AppData=    0
+     5      36.280792     74 /     74 192.168.154.134      23.221.72.202        TCP      IP_HDR{ Len=20 incl. 0 options bytes} AppData=    0
+     6      36.307205     60 /     60 23.221.72.202        192.168.154.134      TCP      IP_HDR{ Len=20 incl. 0 options bytes} AppData=    0
+     7      36.307294     54 /     54 192.168.154.134      23.221.72.202        TCP      IP_HDR{ Len=20 incl. 0 options bytes} AppData=    0
+     8      36.308766    350 /    350 192.168.154.134      23.221.72.202        TCP      IP_HDR{ Len=20 incl. 0 options bytes} AppData=    0
+     9      38.481446    180 /    180 192.168.154.134      52.38.5.11           TCP      IP_HDR{ Len=20 incl. 0 options bytes} AppData=    0
+    10      38.607184    157 /    157 192.168.154.2        192.168.154.134      UDP      IP_HDR{ Len=20 incl. 0 options bytes} AppData=    0
+    11      38.832622    634 /    634 192.168.154.134      52.38.5.11           TCP      IP_HDR{ Len=20 incl. 0 options bytes} AppData=    0
+    12      39.266294     95 /     95 192.168.154.134      192.168.154.2        UDP      IP_HDR{ Len=20 incl. 0 options bytes} AppData=    0
+    13     106.036080     54 /     54 192.168.154.134      172.217.13.66        TCP      IP_HDR{ Len=20 incl. 0 options bytes} AppData=    0
+
+Reached end of PCAP file 'trafficUdpTcp.pcap'
