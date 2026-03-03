@@ -1,0 +1,22 @@
+
+Processing PCAP file 'trafficArpIcmp.pcap'
+
+magic number A1B2C3D4
+major version 2
+minor version 4
+GMT to local correction 0 seconds
+accuracy of timestamps 0
+Cut-off max length of captured packets 262144
+data link type 1
+
+PktNum     Time Stamp OrgLen / Captrd Source               Destination          Protocol info
+     1       0.000000     42 /     42 00:0c:29:42:92:84    ff:ff:ff:ff:ff:ff    
+     2       0.000377     60 /     60 00:0c:29:f4:45:4e    00:0c:29:42:92:84    
+     3       0.000383     98 /     98 00:0c:29:42:92:84    00:0c:29:f4:45:4e    
+     4       0.000647     98 /     98 00:0c:29:f4:45:4e    00:0c:29:42:92:84    
+     5       1.735968     42 /     42 00:0c:29:42:92:84    ff:ff:ff:ff:ff:ff    
+     6       1.736315     60 /     60 00:0c:29:e2:4f:fd    00:0c:29:42:92:84    
+     7       1.736320     98 /     98 00:0c:29:42:92:84    00:0c:29:e2:4f:fd    
+     8       1.736593     98 /     98 00:0c:29:e2:4f:fd    00:0c:29:42:92:84    
+
+Reached end of PCAP file 'trafficArpIcmp.pcap'
