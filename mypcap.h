@@ -1,8 +1,8 @@
 /* ------------------------------------------------------------------------
     CS-455  Advanced Computer Networking
     Simplified Packet Analysis Programming Projects
-    Designed By:        Dr. Mohamed Aboutabl  (c) 2020, 2022
-
+    Designed By:        Dr. Mohamed Aboutabl  (c) 2026
+    
     File Name:          mypcap.h
 
        N E V E R       M O D I F Y      T H I S      F I L E
@@ -129,8 +129,8 @@ typedef struct __attribute__((__packed__))
              ip_proto ;         // Payload Protocol
     uint16_t ip_hdrChk ;        // Header Checksum
 
-    IPv4addr ip_srcIP ,     // Source IP address
-             ip_dstIP ;     // Destination IP address
+    IPv4addr ip_srcIP ,         // Source IP address
+             ip_dstIP ;         // Destination IP address
 
     // variable-size Options start here
     // The following array adds no more bytes to this struct, but captures 
@@ -176,8 +176,17 @@ void      printPCAPhdr( const pcap_hdr_t * ) ;
 bool      getNextPacket( packetHdr_t *p , uint8_t  ethFrame[]  ) ;
 void      printPacketMetaData( const packetHdr_t*   ) ;
 void      printPacket( const etherHdr_t * ) ;
+                                             
+/*-------------------------*/
+/*        PROJECT 1        */
+/*-------------------------*/
+void      printARPinfo( const arpMsg_t  * ) ;
+void      printIPinfo ( const ipv4Hdr_t * ) ;
+unsigned  printICMPinfo( const icmpHdr_t * ) ;
 
 /*-------------------------------------------------------------------------*/
 /*               Suggested Utility Functions                               */
 /*-------------------------------------------------------------------------*/
-char     *macToStr( const uint8_t *p , char *buf  ) ;
+
+char     *ipToStr( const IPv4addr ip , char *ipStr  ) ;
+char     *macToStr( const uint8_t *p , char *buf    ) ;

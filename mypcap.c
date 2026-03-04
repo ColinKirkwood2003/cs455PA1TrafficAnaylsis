@@ -221,16 +221,119 @@ void printPacketMetaData( const packetHdr_t *p  )
 }
 
 /*-------------------------------------------------------------------------*/
+/* print ARP information */
+void printARPinfo( const arpMsg_t *arp )
+{
+    if (!arp) return;
+
+    uint16_t op = ntohs(arp->arp_oper);
+
+    char spa[MAXIPv4ADDRLEN];
+    char tpa[MAXIPv4ADDRLEN];
+    char sha[MAXMACADDRLEN];
+
+    ipToStr(arp->arp_spa, spa);
+    ipToStr(arp->arp_tpa, tpa);
+    macToStr(arp->arp_sha, sha);
+
+    if (op == ARPREQUEST)
+    {
+        printf("Who has %s ? Tell %s", tpa, spa);
+    }
+    else if (op == ARPREPLY)
+    {
+        printf("%s is at %s", spa, sha);
+    }
+}
+
+/*-------------------------------------------------------------------------*/
+/* print IP information */
+void printIPinfo( const ipv4Hdr_t *ip )
+{
+    if (!ip) return;
+
+    char srcIP[MAXIPv4ADDRLEN];
+    char dstIP[MAXIPv4ADDRLEN];
+
+    ipToStr(ip->ip_srcIP, srcIP);
+    ipToStr(ip->ip_dstIP, dstIP);
+
+    printf("%-20s %-20s ", srcIP, dstIP);
+
+    // Compute header length
+    unsigned ihl = (ip->ip_verHlen & 0x0F) * 4;
+    unsigned optionsLen = ihl - 20;
+
+    printf("IP_HDR{ Len=%u incl. %u options bytes} ",
+           ihl, optionsLen);
+
+    if (ip->ip_proto == PROTO_ICMP)
+    {
+        printf("%-8s ", "ICMP");
+
+        const icmpHdr_t *icmp =
+            (const icmpHdr_t *)((const uint8_t *)ip + ihl);
+
+        unsigned dataLen = printICMPinfo(icmp);
+        printf(" AppData=%5u", dataLen);
+    }
+    else if (ip->ip_proto == PROTO_TCP)
+    {
+        printf("%-8s AppData=%5u", "TCP", 0);
+    }
+    else if (ip->ip_proto == PROTO_UDP)
+    {
+        printf("%-8s AppData=%5u", "UDP", 0);
+    }
+}
+
+/*-------------------------------------------------------------------------*/
 /* Print the packet's captured data starting with its ethernet frame header
    and moving up the protocol hierarchy */ 
 
 void printPacket( const etherHdr_t *frPtr )
 {
-    // print Source/Destination MAC addresses
-    char src[18];
-    char dst[18];
+    // Null pointer checker
+    if (!frPtr)
+    {
+        return;
+    }
 
-    printf("%-20s %-20s ", macToStr(frPtr->eth_srcMAC, src), macToStr(frPtr->eth_dstMAC, dst));
+    char srcMAC[MAXMACADDRLEN];
+    char dstMAC[MAXMACADDRLEN];
+
+    // print Source/Destination MAC addresses REFACTORED, replaced with above
+    // char src[18];
+    // char dst[18];
+
+    printf("%-20s %-20s ", macToStr(frPtr->eth_srcMAC, srcMAC), macToStr(frPtr->eth_dstMAC, dstMAC));
+
+    // -------------------------------P1 modifications start here-------------------------------------------
+    uint16_t etherType = ntohs(frPtr -> eth_type); // Extract the type from the hdr
+
+    // Depending on type, we print a packet differently.
+    // ARP and IPv4 are the allowed ones for now. Maybe refactor for switch statement instead
+    if (etherType == PROTO_ARP)
+    {
+        printf("%-8s ", "ARP");
+
+        const arpMsg_t *arpPtr =
+            (const arpMsg_t *)((const uint8_t *)frPtr + sizeof(etherHdr_t));
+
+        printARPinfo(arpPtr);
+    }
+    else if (etherType == PROTO_IPv4)
+    {
+        const ipv4Hdr_t *ipPtr =
+            (const ipv4Hdr_t *)((const uint8_t *)frPtr + sizeof(etherHdr_t));
+
+        printIPinfo(ipPtr);
+    }
+    else
+    {
+        printf("Unknown\n"); // Debugging purposes for now, not permanent
+    }
+
 }
 
 
@@ -260,4 +363,14 @@ static uint16_t swap16( uint16_t v )
 static uint32_t swap32( uint32_t v )
 {
     return ((v >> 24) & 0x000000FF) | ((v >> 8)  & 0x0000FF00) | ((v << 8)  & 0x00FF0000) | ((v << 24) & 0xFF000000);
+}
+
+// Helper function to parse IP address to string readable
+char *ipToStr( const IPv4addr ip , char *ipStr )
+{
+    sprintf(ipStr, "%u.%u.%u.%u",
+        ip.byte[0], ip.byte[1],
+        ip.byte[2], ip.byte[3]);
+
+    return ipStr;
 }
