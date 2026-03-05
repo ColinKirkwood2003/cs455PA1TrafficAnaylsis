@@ -3,7 +3,7 @@
     Simplified Packet Analysis Programming Projects
     Designed By:        Dr. Mohamed Aboutabl  (c) 2026
     
-    Implemented By:     Diego Navia
+    Implemented By:     Diego Navia and Colin Kirkwood
     File Name:          mypcap.c
 
 ---------------------------------------------------------------------------*/
@@ -245,6 +245,30 @@ void printARPinfo( const arpMsg_t *arp )
         printf("%s is at %s", spa, sha);
     }
 }
+
+/*-------------------------------------------------------------------------*/
+/* Print ICMP information, returns the application data length */
+unsigned printICMPinfo( const icmpHdr_t *icmp )
+{
+    if (!icmp) return 0;
+
+    // icmp_line2 is 4 raw bytes in network order:
+    // bytes [0-1] = identifier, bytes [2-3] = sequence number
+    unsigned id  = (icmp->icmp_line2[0] << 8) | icmp->icmp_line2[1];
+    unsigned seq = (icmp->icmp_line2[2] << 8) | icmp->icmp_line2[3];
+
+    if (icmp->icmp_type == ICMP_ECHO_REQUEST)
+    {
+        printf("ICMP_HDR{ Echo Request :id=%5u, seq= %4u}", id, seq);
+    }
+    else if (icmp->icmp_type == ICMP_ECHO_REPLY)
+    {
+        printf("ICMP_HDR{ Echo Reply   :id=%5u, seq= %4u}", id, seq);
+    }
+
+    return 0; /* caller will compute AppData separately */
+}
+
 
 /*-------------------------------------------------------------------------*/
 /* print IP information */

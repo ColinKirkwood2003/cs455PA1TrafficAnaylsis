@@ -3,7 +3,7 @@
     Simplified Packet Analysis Programming Projects
     Designed By:        Dr. Mohamed Aboutabl  (c) 2026
     
-    Implemented By:     Diego Navia
+    Implemented By:     Diego Navia and Colin Kirkwood
     File Name:          p1.c
 
 ---------------------------------------------------------------------------*/
