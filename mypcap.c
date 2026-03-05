@@ -221,16 +221,20 @@ void printPacketMetaData( const packetHdr_t *p  )
 }
 
 /*-------------------------------------------------------------------------*/
-/* print ARP information */
+/* Extract and print ARP information from packet matching the ARP protocol frame*/
 void printARPinfo( const arpMsg_t *arp )
 {
-    if (!arp) return;
+    // Null pointer checker
+    if (!arp) 
+    {
+        return;
+    }
 
-    uint16_t op = ntohs(arp->arp_oper);
+    uint16_t op = ntohs(arp->arp_oper); // ARP Operation
 
-    char spa[MAXIPv4ADDRLEN];
-    char tpa[MAXIPv4ADDRLEN];
-    char sha[MAXMACADDRLEN];
+    char spa[MAXIPv4ADDRLEN]; // Sender Protocol Address
+    char tpa[MAXIPv4ADDRLEN]; // Target Protocol Address
+    char sha[MAXMACADDRLEN]; // Sender Hardware Address
 
     ipToStr(arp->arp_spa, spa);
     ipToStr(arp->arp_tpa, tpa);
@@ -250,10 +254,14 @@ void printARPinfo( const arpMsg_t *arp )
 /* Print ICMP information, returns the application data length */
 unsigned printICMPinfo( const icmpHdr_t *icmp )
 {
-    if (!icmp) return 0;
+    if (!icmp)
+    {
+        return 0;
+    }
 
     // icmp_line2 is 4 raw bytes in network order:
     // bytes [0-1] = identifier, bytes [2-3] = sequence number
+    // ICMP Identifier and Seq Num are 16 bits, so we combine respective elements
     unsigned id  = (icmp->icmp_line2[0] << 8) | icmp->icmp_line2[1];
     unsigned seq = (icmp->icmp_line2[2] << 8) | icmp->icmp_line2[3];
 
@@ -274,39 +282,47 @@ unsigned printICMPinfo( const icmpHdr_t *icmp )
 /* print IP information */
 void printIPinfo( const ipv4Hdr_t *ip )
 {
-    if (!ip) return;
+    if (!ip) 
+    {
+        return;
+    }
 
     char srcIP[MAXIPv4ADDRLEN];
     char dstIP[MAXIPv4ADDRLEN];
 
-    ipToStr(ip->ip_srcIP, srcIP);
-    ipToStr(ip->ip_dstIP, dstIP);
+    ipToStr(ip->ip_srcIP, srcIP); // Source IP Address
+    ipToStr(ip->ip_dstIP, dstIP); // Destination IP Address
 
     printf("%-20s %-20s ", srcIP, dstIP);
 
     // Compute header length
+    // We ignore the version because we're always working with IPv4
+    // In 32-bit increments/words, so multiply by 4 to get actual length of IP header
     unsigned ihl = (ip->ip_verHlen & 0x0F) * 4;
-    unsigned optionsLen = ihl - 20;
-
-    printf("IP_HDR{ Len=%u incl. %u options bytes} ",
-           ihl, optionsLen);
+    unsigned optionsLen = ihl - 20; // Options Lenght = Internet Header Length - Minimum IP header length
 
     if (ip->ip_proto == PROTO_ICMP)
     {
         printf("%-8s ", "ICMP");
+        printf("IP_HDR{ Len=%u incl. %u options bytes} ", ihl, optionsLen);
 
-        const icmpHdr_t *icmp =
-            (const icmpHdr_t *)((const uint8_t *)ip + ihl);
+        // IP pointer + IP header length = ICMP pointer in memory
+        const icmpHdr_t *icmp = (const icmpHdr_t *)((const uint8_t *)ip + ihl);
 
-        unsigned dataLen = printICMPinfo(icmp);
+        uint16_t totalLen = ntohs(ip->ip_totLen);
+        unsigned dataLen = totalLen - ihl - sizeof(icmp);
+
+        printICMPinfo(icmp);
         printf(" AppData=%5u", dataLen);
     }
     else if (ip->ip_proto == PROTO_TCP)
     {
+        printf("IP_HDR{ Len=%u incl. %u options bytes} ", ihl, optionsLen);
         printf("%-8s AppData=%5u", "TCP", 0);
     }
     else if (ip->ip_proto == PROTO_UDP)
     {
+        printf("IP_HDR{ Len=%u incl. %u options bytes} ", ihl, optionsLen);
         printf("%-8s AppData=%5u", "UDP", 0);
     }
 }
@@ -323,41 +339,34 @@ void printPacket( const etherHdr_t *frPtr )
         return;
     }
 
-    char srcMAC[MAXMACADDRLEN];
-    char dstMAC[MAXMACADDRLEN];
-
-    // print Source/Destination MAC addresses REFACTORED, replaced with above
-    // char src[18];
-    // char dst[18];
-
-    printf("%-20s %-20s ", macToStr(frPtr->eth_srcMAC, srcMAC), macToStr(frPtr->eth_dstMAC, dstMAC));
-
-    // -------------------------------P1 modifications start here-------------------------------------------
     uint16_t etherType = ntohs(frPtr -> eth_type); // Extract the type from the hdr
 
     // Depending on type, we print a packet differently.
-    // ARP and IPv4 are the allowed ones for now. Maybe refactor for switch statement instead
-    if (etherType == PROTO_ARP)
+    // ARP and IPv4 are the used protocols for now.
+    switch (etherType)
     {
-        printf("%-8s ", "ARP");
+        case PROTO_ARP:
+            char srcMAC[MAXMACADDRLEN];
+            char dstMAC[MAXMACADDRLEN];
 
-        const arpMsg_t *arpPtr =
-            (const arpMsg_t *)((const uint8_t *)frPtr + sizeof(etherHdr_t));
+            // Print MAC address
+            printf("%-20s %-20s ", macToStr(frPtr->eth_srcMAC, srcMAC), macToStr(frPtr->eth_dstMAC, dstMAC));
+            printf("%-8s ", "ARP");
 
-        printARPinfo(arpPtr);
+            const arpMsg_t *arpPtr = (const arpMsg_t *)((const uint8_t *)frPtr + sizeof(etherHdr_t));
+
+            printARPinfo(arpPtr);
+            break;
+        case PROTO_IPv4:
+        
+            const ipv4Hdr_t *ipPtr = (const ipv4Hdr_t *)((const uint8_t *)frPtr + sizeof(etherHdr_t));
+
+            printIPinfo(ipPtr);
+            break;
+
+        default:
+            break;
     }
-    else if (etherType == PROTO_IPv4)
-    {
-        const ipv4Hdr_t *ipPtr =
-            (const ipv4Hdr_t *)((const uint8_t *)frPtr + sizeof(etherHdr_t));
-
-        printIPinfo(ipPtr);
-    }
-    else
-    {
-        printf("Unknown\n"); // Debugging purposes for now, not permanent
-    }
-
 }
 
 
