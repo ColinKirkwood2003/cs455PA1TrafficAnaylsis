@@ -310,20 +310,22 @@ void printIPinfo( const ipv4Hdr_t *ip )
         const icmpHdr_t *icmp = (const icmpHdr_t *)((const uint8_t *)ip + ihl);
 
         uint16_t totalLen = ntohs(ip->ip_totLen);
-        unsigned dataLen = totalLen - ihl - sizeof(icmp);
+        unsigned dataLen = totalLen - ihl - sizeof(icmpHdr_t);
 
         printICMPinfo(icmp);
         printf(" AppData=%5u", dataLen);
     }
     else if (ip->ip_proto == PROTO_TCP)
     {
+        printf("%-8s ", "TCP");
         printf("IP_HDR{ Len=%u incl. %u options bytes} ", ihl, optionsLen);
-        printf("%-8s AppData=%5u", "TCP", 0);
+        printf("AppData=%5u", 0);
     }
     else if (ip->ip_proto == PROTO_UDP)
     {
+        printf("%-8s ", "UDP");
         printf("IP_HDR{ Len=%u incl. %u options bytes} ", ihl, optionsLen);
-        printf("%-8s AppData=%5u", "UDP", 0);
+        printf("AppData=%5u", 0);
     }
 }
 
